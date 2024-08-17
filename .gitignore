@@ -1,4 +1,4 @@
 c_compiler/target/*
 .vscode/*
-
+Cargo.lock
 
