@@ -1,3 +1,4 @@
-c_compiler/target/
-c_compiler/.vscode/
-c_compiler/target/
+c_compiler/target/*
+c_compiler/.vscode/*
+c_compiler/debug/*
+
