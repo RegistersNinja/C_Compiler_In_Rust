@@ -22,6 +22,7 @@ use std::env;
 use std::process::exit;
 use std::process::Command;
 use compiler::lexer;
+use compiler::parser;
 
 
 fn main() {
@@ -53,12 +54,17 @@ fn main() {
                 .output()
                 .expect("Failed to preprocess");
             //compiler command goes here
+
+            //lexer
             let lexed = lexer::lexer(arguments.borrow()).unwrap();
             if arguments.lex == true {
                 for (token, value) in lexed.iter() {
                     println!("Token: {}, Value: {}",token,value);
                 }
             }
+
+            //parser
+            // let parsed = parser::parser(lexed);
             //assembler & linker command goes here
         }
     }

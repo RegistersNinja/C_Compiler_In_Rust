@@ -61,7 +61,7 @@ fn tokenizer(mut input: &str) -> Vec<(String, String)> { //list
                 None => continue,
                 Some(m) => {
                     let capture_length = m.end() - m.start();
-                    if capture_length > match_prev_len {
+                    if capture_length >= match_prev_len {
                         match_prev_len = capture_length;
                         match_token = token.to_string();
                         match_value = m.as_str().to_string();
