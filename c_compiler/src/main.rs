@@ -62,9 +62,11 @@ fn main() {
                     println!("Token: {}, Value: {}",token,value);
                 }
             }
-
             //parser
-            // let parsed = parser::parser(lexed);
+            let parsed = parser::parser(lexed).unwrap();
+            if arguments.parse == true {
+                parsed.recursive_print();
+            }
             //assembler & linker command goes here
         }
     }
