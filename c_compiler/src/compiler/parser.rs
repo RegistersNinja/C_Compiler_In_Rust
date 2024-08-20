@@ -24,7 +24,7 @@ Token: close_brace, Value: }
 use std::error::Error;
 
 pub struct ASTNode {
-    program: Program,
+    pub program: Program,
 }
 
 impl ASTNode {
@@ -33,13 +33,17 @@ impl ASTNode {
     }
 }
 
-struct Program {
+pub struct Program {
     program: Function,
 }
 
 impl Program {
     fn recursive_print(&self, indent: usize) {
         self.program.recursive_print(indent);
+    }
+
+    pub fn generate_assembly(&self, assembly: &mut String, indent: usize) {
+        self.program.generate_assembly(assembly, indent);
     }
 }
 
@@ -52,6 +56,11 @@ impl Function {
     fn recursive_print(&self, indent: usize) {
         self.declaration.recursive_print(indent);
         self.body.recursive_print(indent);
+    }
+
+    fn generate_assembly(&self, assembly: &mut String, indent: usize) {
+        self.declaration.generate_assembly(assembly, indent);
+        self.body.generate_assembly(assembly, indent);
     }
 }
 
@@ -69,6 +78,12 @@ impl Declaration {
         println!("{}  Name: {}", indent_str, self.name);
         println!("{}  Parameters: {}", indent_str, self.parameters);
     }
+
+    fn generate_assembly(&self, assembly: &mut String, indent: usize) {
+        let indent_str = " ".repeat(indent);
+        assembly.push_str(&format!("{}.global {}\n", indent_str, self.name));
+        assembly.push_str(&format!("{}{}:\n", indent_str, self.name));
+    }
 }
 
 struct Body {
@@ -78,6 +93,10 @@ struct Body {
 impl Body {
     fn recursive_print(&self, indent: usize) {
         self.statement.recursive_print(indent);
+    }
+
+    fn generate_assembly(&self, assembly: &mut String, indent: usize) {
+        self.statement.generate_assembly(assembly, indent + 2);
     }
 }
 
@@ -95,6 +114,19 @@ impl Statement {
             }
         }
     }
+
+    fn generate_assembly(&self, assembly: &mut String, indent: usize) {
+        match self {
+            Statement::Return(expr) => {
+                let indent_str = " ".repeat(indent);
+                expr.generate_assembly(assembly, 0);
+                assembly.push_str("\n");
+                assembly.push_str(&format!("{}mov %rax, ", indent_str));
+                
+                assembly.push_str(&format!("{}ret\n", indent_str));
+            }
+        }
+    }
 }
 
 struct Expression {
@@ -106,6 +138,10 @@ impl Expression {
     fn recursive_print(&self, indent: usize) {
         self.r#const.recursive_print(indent);
         self.end_expression.recursive_print(indent);
+    }
+
+    fn generate_assembly(&self, assembly: &mut String, _indent: usize) {
+        self.r#const.generate_assembly(assembly, 0);
     }
 }
 
@@ -131,6 +167,13 @@ impl Constant {
         let indent_str = " ".repeat(indent);
         match self {
             Constant::Val(val) => println!("{}Constant: {}", indent_str, val),
+        }
+    }
+    fn generate_assembly(&self, assembly: &mut String, _indent: usize) {
+        match self {
+            Constant::Val(val) => {
+                assembly.push_str(&format!("${}", val));
+            }
         }
     }
 }

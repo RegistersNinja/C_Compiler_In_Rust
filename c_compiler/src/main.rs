@@ -67,6 +67,14 @@ fn main() {
             if arguments.parse == true {
                 parsed.recursive_print();
             }
+
+            //gcc -m32 assembly.s -o out
+            let assembly = compiler::assembly_generator::assembly_generator(&parsed, &arguments.output_path);
+            Command::new("gcc").args(&[
+                "-c", &arguments.output_path, "-o", &arguments.output_path])       
+                .output()
+                .expect("Failed to preprocess");
+
             //assembler & linker command goes here
         }
     }
