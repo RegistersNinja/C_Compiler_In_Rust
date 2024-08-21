@@ -237,15 +237,24 @@ fn parse_declaration(tokenized_list: &mut Vec<(String, String)>) -> Result<Decla
                 "main" => {
                     if expect("(".to_string(),tokenized_list.remove(0).1) {
                         let parameters = tokenized_list.remove(0).1;
-                        if expect(")".to_string(), tokenized_list.remove(0).1) {
+                        if parameters.eq(&")".to_string()){
                             Ok(Declaration {
                                 return_type,
                                 name,
-                                parameters,
+                                parameters: "None".to_owned(),
                             })
-                        } else {
-                            Err("Parse declaration failed".to_string())
+                        }else {
+                            if expect(")".to_string(), tokenized_list.remove(0).1) {
+                                Ok(Declaration {
+                                    return_type,
+                                    name,
+                                    parameters,
+                                })
+                            } else {
+                                Err("Parse declaration failed".to_string())
+                            }
                         }
+                        
 
                     } else {
                         Err("Parse declaration failed".to_string())

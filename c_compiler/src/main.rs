@@ -47,7 +47,6 @@ fn main() {
             exit(-1);
         }
         Some(arguments) => {
-            println!("Arguments are fine");
             //gcc -E -P INPUT_FILE -o PREPROCESSED_FILE
             Command::new("gcc").args(&[
                 "-E", "-P", &arguments.src_path, "-o", &(arguments.output_path.clone()+".i")])       
