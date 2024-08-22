@@ -17,7 +17,7 @@
 */
 
 
-use std::{fmt::Error, fs};
+use std::{fmt::Error, fs, process::Command};
 use crate::args::ReturnStruct;
 use regex::Regex;
 
@@ -78,6 +78,10 @@ fn tokenizer(mut input: &str) -> Vec<(String, String)> { //list
 
 pub fn lexer(input: &ReturnStruct) -> Result<Vec<(String, String)>,Error> { 
     let read_file = read_input(input.src_path.clone());
+    Command::new("rm").args(&[
+        "-f", &(input.output_path.clone()+".i")])       
+        .output()
+        .expect("Failed to preprocess");
     match read_file{
         Ok(s) => return Ok(tokenizer(&s)),
         Err(e) => {
